@@ -6,7 +6,7 @@ A comprehensive repository documenting hands-on enterprise cloud operations, Win
 
 | Domain | Focus Area | Status |
 | :--- | :--- | :--- |
-| **01 - Identity & Governance** | Entra ID, RBAC Roles, Azure Policies | 🔄 In Progress |
+| **01 - Identity & Governance** | Entra ID, RBAC Roles, Azure Policies | ✅ Completed |
 | **02 - Compute & Wintel** | VM Provisioning, Active Directory, Server Remediation | ⏳ Coming Soon |
 | **03 - Linux Server Security** | OS Installation, SSH Key Auth, System Hardening | ⏳ Coming Soon |
 | **04 - Hybrid Networking** | Virtual Networks, Network Security Groups (NSGs) | ⏳ Coming Soon |
