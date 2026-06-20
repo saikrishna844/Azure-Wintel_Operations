@@ -98,9 +98,7 @@ Web Server :
 
 tracert <Database_NIC_IP> 
 
-<img width="1912" height="981" alt="image" src="https://github.com/user-attachments/assets/5b7a035d-de0c-4bb6-9c53-d42fb77fdbd0" />
-
-
+<img width="1912" height="981" alt="image" src="https://github.com/user-attachments/assets/5b7a035d-de0c-4bb6-9c53-d42fb77fdbd0" />   
 
 
 
@@ -110,3 +108,76 @@ Conclusion: The output verifies the custom routing architecture is functioning p
 Hop 1 (10.0.1.4): Traffic was successfully intercepted by the Route Table and sent to the Security Appliance for inspection.
 
 Hop 2 (10.0.3.4): The Appliance successfully forwarded the traffic to the final Database destination.
+
+
+
+
+
+# Azure Multi-Tier Architecture: Internal Load Balancer (ILB)
+
+This repository demonstrates a secure, multi-tier cloud architecture in Microsoft Azure using an Internal Load Balancer to protect the database tier.
+
+## 🏗️ The Architectural Concept: Why use an ILB?
+In a standard lab environment, a web server can connect directly to a single database virtual machine using its private IP address (e.g., `10.0.3.4`). However, this direct-connection model fails in enterprise production environments. 
+
+This architecture implements an **Internal Load Balancer (ILB)** to act as a secure proxy between the web tier and the database tier, solving three critical enterprise challenges:
+
+1. **High Availability (Fault Tolerance):** If `Database-vm1` experiences a catastrophic failure, the ILB's health probes detect the crash instantly and reroute all web server traffic to `Database-vm2`. The application remains online without manual intervention.
+2. **Horizontal Scalability:** As user traffic increases, a single database server will bottleneck. The ILB allows us to add multiple database servers into a "Backend Pool" and distributes the traffic load evenly across all of them.
+3. **Zero-Downtime Maintenance:** Administrators can manually drain traffic from specific database nodes to perform OS patching or software upgrades while the ILB keeps the overall database tier serving traffic to the frontend.
+
+## 🔒 Security Posture
+By using an ILB, the database servers are never assigned Public IP addresses. They remain completely isolated from the internet. The frontend web servers only communicate with the ILB's frontend private IP (e.g., `10.0.3.6`), ensuring a strict implementation of the Principle of Least Privilege.
+2. The Infrastructure as Code (main.tf)
+When engineers store this "concept" in GitHub, they don't just store pictures; they store the deployment scripts. Here is the Terraform code block that translates the exact clicking you just did in the Azure Portal into automated code.
+
+Create a file named main.tf and paste this in:
+
+Terraform
+``` # 1. Create the Internal Load Balancer
+resource "azurerm_lb" "internal_db_lb" {
+  name                = "Internal-DB-LB"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Standard"
+
+  # The Private "Front Door" (Frontend IP Configuration)
+  frontend_ip_configuration {
+    name                          = "ILB-Private-Frontend"
+    subnet_id                     = azurerm_subnet.database_subnet.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+# 2. Create the Backend Pool (Grouping the Database VMs together)
+resource "azurerm_lb_backend_address_pool" "db_backend_pool" {
+  loadbalancer_id = azurerm_lb.internal_db_lb.id
+  name            = "DB-Servers-Pool"
+}
+
+# 3. Create the Health Probe (The Heartbeat Check on Port 3389)
+resource "azurerm_lb_probe" "db_health_probe" {
+  loadbalancer_id = azurerm_lb.internal_db_lb.id
+  name            = "DB-Health-Probe"
+  protocol        = "Tcp"
+  port            = 3389
+  interval_in_seconds = 5
+  number_of_probes    = 2
+}
+
+# 4. Create the Load Balancing Rule (The Traffic Cop)
+resource "azurerm_lb_rule" "ilb_rdp_rule" {
+  loadbalancer_id                = azurerm_lb.internal_db_lb.id
+  name                           = "ILB-RDP-Rule"
+  protocol                       = "Tcp"
+  frontend_port                  = 3389
+  backend_port                   = 3389
+  frontend_ip_configuration_name = "ILB-Private-Frontend"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.db_backend_pool.id]
+  probe_id                       = azurerm_lb_probe.db_health_probe.id
+  idle_timeout_in_minutes        = 4
+  enable_floating_ip             = false
+}
+
+``` 
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/413fd998-f247-4d12-ad04-a7e37e9d82c4" />
