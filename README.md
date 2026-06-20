@@ -8,11 +8,11 @@ A comprehensive repository documenting hands-on enterprise cloud operations, Win
 | :--- | :--- | :--- | 
 | **00 - Understanding OSI Layer Easily** | Physical,Data link,Network,Transport,Session,Presentation,Application  | ✅ Completed |
 | **01 - Identity & Governance** | Entra ID, RBAC Roles, Azure Policies | ✅ Completed |
-| **03 - Networking  Azure** | System Route to User Route Using Virtual Machine Appliance, Vnet Peering | ✅ Completed |
-| **04 - Compute & Wintel** | VM Provisioning, Active Directory, Server Remediation | ⏳ Coming Soon |
-| **05 - Linux Server Security** | OS Installation, SSH Key Auth, System Hardening | ⏳ Coming Soon |
-| **06 - Hybrid Networking** | Virtual Networks, Network Security Groups (NSGs) | ⏳ Coming Soon |
-| **07 - Monitoring & Observability** | Azure Monitor, Dynatrace, Log Analytics | ⏳ Coming Soon |
+| **02 - Networking  Azure** | System Route to User Route Using Virtual Machine Appliance, Vnet Peering | ✅ Completed |
+| **03 - Compute & Wintel** | VM Provisioning, Active Directory, Server Remediation | ⏳ Coming Soon |
+| **04 - Linux Server Security** | OS Installation, SSH Key Auth, System Hardening | ⏳ Coming Soon |
+| **05 - Hybrid Networking** | Virtual Networks, Network Security Groups (NSGs) | ⏳ Coming Soon |
+| **06 - Monitoring & Observability** | Azure Monitor, Dynatrace, Log Analytics | ⏳ Coming Soon |
 
 ## 🛠️ Infrastructure Methodology
 
